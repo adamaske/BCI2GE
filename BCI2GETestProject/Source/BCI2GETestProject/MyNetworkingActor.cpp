@@ -54,7 +54,7 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 
 void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt) {
 	if (!&ArrayReaderPtr) {
-		GEngine->AddOnScreenDebugMessage(6, 5, FColor::Cyan, TEXT("Got Message"));
+		GEngine->AddOnScreenDebugMessage(6, 5, FColor::Cyan, TEXT("Got Message"), 0);
 		UE_LOG(LogTemp, Warning, TEXT("Cannot read array, nullptr returned."));
 		return;
 	}

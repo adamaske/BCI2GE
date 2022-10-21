@@ -35,11 +35,12 @@ if __name__=='__main__':
     app = BCI2GE()
     #This is a replecement for the osc software and sends data to the receiever
     send = sender.Sender(BCI_IP, BCI_PORT)
-    #Sends hei 
-    print("The fake bci sender sending now:")
-    send.send(b"Hei")
-    print("The fake is done sending!")
-    #lopp for recieveing
-    app.loop()
-    #while True:
+    
+    while True:
+        #Sends hei 
+        print("The fake bci sender sending now:")
+        send.send(b"Hei")
+        print("The fake is done sending!")
+        #lopp for recieveing
+        app.loop()
         
