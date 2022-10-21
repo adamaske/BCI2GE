@@ -24,6 +24,7 @@ class BCI2GE():
        
     def loop(self):
         data, adr = self.bci_reciever.receieve()
+        self.ue_sender.send(data);
         print(data)
         #self.ue_sender.Send(data)
 
@@ -31,9 +32,9 @@ class BCI2GE():
 if __name__=='__main__':
     app = BCI2GE()
     #This is a replecement for the osc software and sends data to the receiever
-    send = sender.Sender(BCI_IP, BCI_PORT)
+    #send = sender.Sender(BCI_IP, BCI_PORT)
     while True:
         #Sends hei 
-        send.send(b"Hei")
+        #send.send(b"Hei")
         #lopp for recieveing
         app.loop()
