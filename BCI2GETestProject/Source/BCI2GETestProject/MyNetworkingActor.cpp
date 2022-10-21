@@ -24,9 +24,9 @@ void AMyNetworkingActor::BeginPlay()
 void AMyNetworkingActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+//
 void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	mIP = ip;
 	mPORT = port;
@@ -48,8 +48,8 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	mReceiver = new FUdpSocketReceiver(mSocket, time, TEXT("UDPReceiver"));
 	//OnDataReceived is called each time it gets data over the network, bind this function to our own recv 
 	mReceiver->OnDataReceived().BindUObject(this, &AMyNetworkingActor::Recv);
+	//Starts the receiver
 	mReceiver->Start();
-
 }
 
 void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt) {
@@ -58,8 +58,22 @@ void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4
 		UE_LOG(LogTemp, Warning, TEXT("Cannot read array, nullptr returned."));
 		return;
 	}
+	
+	FOSCData data;
+	TArray<uint8> mData;
+	mData = *ArrayReaderPtr;
+	*ArrayReaderPtr << data;
+	FString text;
+	for (int i = 0; i < mData.Num(); i++) {
+		char a = mData[i];
+		text.Append(a);
+		UE_LOG(LogTemp, Warning, TEXT("Data : %d"), mData[i]);
+	}
 
-	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Got Message"));
+	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Name : "));
+	
+
+	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Got data"));
 }
 
 void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)

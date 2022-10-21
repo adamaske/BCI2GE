@@ -5,7 +5,21 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Networking.h"
+#include "Serialization/Archive.h"
 #include "MyNetworkingActor.generated.h"
+
+
+USTRUCT(BlueprintType)
+struct FOSCData {
+	GENERATED_USTRUCT_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OSCPacket")
+	FString name = " NAme ";
+};
+
+FORCEINLINE FArchive& operator<<(FArchive& ar, FOSCData TheStruct) {
+	ar << TheStruct.name;
+	return ar;
+};
 
 UCLASS()
 class BCI2GETESTPROJECT_API AMyNetworkingActor : public AActor
