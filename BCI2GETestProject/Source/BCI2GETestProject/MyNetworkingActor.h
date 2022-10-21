@@ -37,4 +37,6 @@ public:
 	//Standard naming convetion for the function which Receives the data
 	//What is a FArrayReaderPtr ??					The endpoint which the data is coming from
 	void Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt);
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

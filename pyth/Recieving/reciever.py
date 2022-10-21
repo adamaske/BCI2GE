@@ -9,4 +9,4 @@ class Reciever():
         self.mBUFFERSIZE = BUFFERSIZE
 
     def receieve(self):
-        return self.recieve_socket.recvfrom(self.mBUFFERSIZE)
+        return self.recieve_socket.recvfrom(2*1024*1024)

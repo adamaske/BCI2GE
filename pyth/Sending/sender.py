@@ -7,4 +7,5 @@ class Sender():
         self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def send(self, data):
+        print("Sender is sending data ", data, " to ", self.mIP, " , " , self.mPORT)
         self.send_socket.sendto(data, (self.mIP, self.mPORT))

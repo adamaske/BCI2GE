@@ -16,7 +16,7 @@ void AMyNetworkingActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetupReceiver("127.0.0.1", 5003);
+	SetupReceiver("127.0.0.1", 5700);
 	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Cyan, TEXT("Begin Player"));
 }
 
@@ -42,10 +42,7 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	mSocket = FUdpSocketBuilder(*SocketName).AsNonBlocking().AsReusable().
 		BoundToEndpoint(Endpoint).WithReceiveBufferSize(2 * 1024 * 1024);
 	GEngine->AddOnScreenDebugMessage(0, 5, FColor::Cyan, TEXT("Made socket!"));
-	if (!mSocket) {
-		GEngine->AddOnScreenDebugMessage(2, 5, FColor::Cyan, TEXT("No socket could be made!"));
-		//return;
-	}
+
 	FTimespan time = FTimespan::FromMicroseconds(100);
 	//The socket it receives from, delay from this until it is open, Its multithreaded, name for the thread, debug only
 	mReceiver = new FUdpSocketReceiver(mSocket, time, TEXT("UDPReceiver"));
@@ -55,9 +52,25 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 
 void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt) {
 	if (!&ArrayReaderPtr) {
+		GEngine->AddOnScreenDebugMessage(6, 5, FColor::Cyan, TEXT("Got Message"));
 		UE_LOG(LogTemp, Warning, TEXT("Cannot read array, nullptr returned."));
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Cyan, TEXT("Got Message"));
+	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Got Message"));
+}
+
+void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	delete mReceiver;
+	mReceiver = nullptr;
+
+	//Clear all sockets
+	if (mSocket)
+	{
+		mSocket->Close();
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(mSocket);
+	}
 }
