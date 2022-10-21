@@ -1,50 +1,39 @@
-#python lib for networking?
+#python lib for sockets
 import socket
 
-#This the first time working with udp, 
-#ill make it better and with a sender and reciever class later
+from Recieving import reciever
+from Sending import sender
 
-#While we're waiting for the software, this will act as the bci software
-fake_send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#send to unreal
-def fake_setup_sending():
-    print("Setup send")
-
-
-#Port and ip which is set in the bci-osc software
-BCI_PORT = 5000
+BCI_PORT = 5001
 BCI_IP = "127.0.0.1"
-recieve_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-recieve_socket.bind((BCI_IP, BCI_PORT))
-#to recive data from the bci-osc
-def setup_reciving():
-    print("Setup recieve")
-
-#Socket for sending,  AF_INET for Ipv4, SOCK_DGRAM for UDP
-UE_PORT = 5000
+UE_PORT = 5002
 UE_IP = "127.0.0.1"
-send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#send to unreal
-def setup_sending():
-    print("Setup send")
-
-#Size of messages recieved, standard
 BUFFERSIZE = 1024
 
+class BCI2GE():
+    def __init__(self):
+        self.setup_sending()
+        self.setup_reciving()
+    #Creates a sender called ue_sender with ip and ports which correspons to urneal
+    def setup_sending(self):
+        self.ue_sender = sender.Sender(UE_IP, UE_PORT)
+      
+    #Receiver which listens to the BCI ip and port, see osc app for what these should be
+    def setup_reciving(self):
+        self.bci_reciever = reciever.Reciever(BCI_IP, BCI_PORT, BUFFERSIZE)
+       
+    def loop(self):
+        data, adr = self.bci_reciever.receieve()
+        print(data)
+        #self.ue_sender.Send(data)
+
+
 if __name__=='__main__':
-    setup_reciving()
-    setup_sending()
-
-    #First i send som data
-    send_socket.sendto(b"Fun", (UE_IP, UE_PORT))
+    app = BCI2GE()
+    #This is a replecement for the osc software and sends data to the receiever
+    send = sender.Sender(BCI_IP, BCI_PORT)
     while True:
-        #Here the fake bci sends to the bci port
-        fake_send_socket.sendto(b"Fake data", (BCI_IP, BCI_PORT))
-        #Recieve
-        data, adr = recieve_socket.recvfrom(BUFFERSIZE)
-        #print recived 
-        print("recived message: %s" % data)
-        #Handle the data recieved, unpacking the OSCBundle
-
-        #The data is handled, so we can send it to unreal now
-        send_socket.sendto(b"UE message" ,(UE_IP,UE_PORT))
+        #Sends hei 
+        send.send(b"Hei")
+        #lopp for recieveing
+        app.loop()
