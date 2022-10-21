@@ -48,6 +48,8 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	mReceiver = new FUdpSocketReceiver(mSocket, time, TEXT("UDPReceiver"));
 	//OnDataReceived is called each time it gets data over the network, bind this function to our own recv 
 	mReceiver->OnDataReceived().BindUObject(this, &AMyNetworkingActor::Recv);
+	mReceiver->Start();
+
 }
 
 void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt) {
