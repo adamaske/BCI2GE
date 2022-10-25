@@ -59,21 +59,18 @@ void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4
 		return;
 	}
 	
+	//Drop this
 	FOSCData data;
+	//Array of ascii 
 	TArray<uint8> mData;
+	//Equals the data sent
 	mData = *ArrayReaderPtr;
+	//Overloaded function from the struct
 	*ArrayReaderPtr << data;
-	FString text;
-	for (int i = 0; i < mData.Num(); i++) {
-		char a = mData[i];
-		text.Append(a);
-		UE_LOG(LogTemp, Warning, TEXT("Data : %d"), mData[i]);
-	}
 
-	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Name : "));
+	//Get ascii letters from mData
+	FString string = (FString)mData;
 	
-
-	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Got data"));
 }
 
 void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)

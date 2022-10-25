@@ -39,7 +39,7 @@ if __name__=='__main__':
     while True:
         #Sends hei 
         print("The fake bci sender sending now:")
-        send.send(b"Hei")
+        send.send(bytes(b'Hei'))
         print("The fake is done sending!")
         #lopp for recieveing
         app.loop()
