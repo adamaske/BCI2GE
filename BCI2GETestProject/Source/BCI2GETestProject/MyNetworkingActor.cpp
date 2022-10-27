@@ -64,11 +64,15 @@ void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4
 	
 	
 	//FArrayReaderPtr is the same as TArray<uint8>
-	auto data = ArrayReaderPtr->GetData();
+	uint8* data = ArrayReaderPtr->GetData();
 	//Amount of bytes
-	auto count = ArrayReaderPtr->Num();
-	//Creates 
+	int32 count = ArrayReaderPtr->Num();
+	//Creates string
 	FString mMessageText = UDPBytesToString(data, count);
+
+	//OSCPacket packet = OSCPacket(data, count);
+
+	//Logs what was recieved
 	UE_LOG(LogTemp, Warning, TEXT("Data : %s"), *mMessageText);
 	GEngine->AddOnScreenDebugMessage(4, 5, FColor::Cyan, (TEXT("Got data %s"), *mMessageText));
 }

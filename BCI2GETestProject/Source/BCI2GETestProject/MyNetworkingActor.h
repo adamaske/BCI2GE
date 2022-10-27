@@ -8,6 +8,27 @@
 #include "Serialization/Archive.h"
 #include "MyNetworkingActor.generated.h"
 
+class OSCPacket {
+public:
+	const FString mMentalCommand = "/com";
+	const FString mMC_Neutral = "/com/neutral";
+	const FString mMC_Push = "/com/push";
+	const FString mMC_Pull = "/com/pull";
+	const FString mMC_Left = "/com/left";
+	const FString mMC_Right = "/com/right";
+	const FString mMC_Lift = "/com/lift";
+	const FString mMC_Drop = "/com/drop";
+
+	OSCPacket() {
+
+	};
+	OSCPacket(uint8* data, int32 count) {
+		mData	= data;
+		mCount	= count;
+	};
+	uint8* mData;
+	int32 mCount;
+};
 
 USTRUCT(BlueprintType)
 struct FOSCData {
