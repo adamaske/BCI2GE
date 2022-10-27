@@ -1,12 +1,13 @@
 #python lib for sockets
 import socket
+import _thread
 
 from Recieving import reciever
 from Sending import sender
 
-BCI_PORT = 6050
+BCI_PORT = 5700
 BCI_IP = "127.0.0.1"
-UE_PORT = 5700
+UE_PORT = 5800
 UE_IP = "127.0.0.1"
 BUFFERSIZE = 1024
 
@@ -38,9 +39,9 @@ if __name__=='__main__':
     
     while True:
         #Sends hei 
-        print("The fake bci sender sending now:")
-        send.send(b"Hei")
-        print("The fake is done sending!")
+        #print("The fake bci sender sending now:")
+        #send.send(b"Hei")
+        #print("The fake is done sending!")
         #lopp for recieveing
         app.loop()
         

@@ -51,6 +51,8 @@ public:
 	//Standard naming convetion for the function which Receives the data
 	//What is a FArrayReaderPtr ??					The endpoint which the data is coming from
 	void Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt);
-
+	//Function to create string from 
+	FString UDPBytesToString(const uint8* In, int32 Count);
+	//Called at end of play to make sure the socket dont persist
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

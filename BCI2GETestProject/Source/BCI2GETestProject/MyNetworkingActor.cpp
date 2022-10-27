@@ -17,7 +17,7 @@ void AMyNetworkingActor::BeginPlay()
 	Super::BeginPlay();
 	
 	SetupReceiver("127.0.0.1", 5700);
-	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Cyan, TEXT("Begin Player"));
+	
 }
 
 // Called every frame
@@ -39,10 +39,11 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	//							//The socket listens to our endpoint, we want specified buffer size
 	GEngine->AddOnScreenDebugMessage(0, 5, FColor::Cyan, TEXT("Trying to make socket!"));
 	const FString& SocketName = "Name";
+	//Creates the socket
 	mSocket = FUdpSocketBuilder(*SocketName).AsNonBlocking().AsReusable().
 		BoundToEndpoint(Endpoint).WithReceiveBufferSize(2 * 1024 * 1024);
-	GEngine->AddOnScreenDebugMessage(0, 5, FColor::Cyan, TEXT("Made socket!"));
-
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Cyan, TEXT("Made socket!"));
+	//Actiavte in x seconds
 	FTimespan time = FTimespan::FromMicroseconds(100);
 	//The socket it receives from, delay from this until it is open, Its multithreaded, name for the thread, debug only
 	mReceiver = new FUdpSocketReceiver(mSocket, time, TEXT("UDPReceiver"));
@@ -50,30 +51,26 @@ void AMyNetworkingActor::SetupReceiver(char* ip, int32 port) {
 	mReceiver->OnDataReceived().BindUObject(this, &AMyNetworkingActor::Recv);
 	//Starts the receiver
 	mReceiver->Start();
+
+	GEngine->AddOnScreenDebugMessage(2, 5, FColor::Cyan, TEXT("Receiver Started"));
 }
 
 void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt) {
 	if (!&ArrayReaderPtr) {
-		GEngine->AddOnScreenDebugMessage(6, 5, FColor::Cyan, TEXT("Got Message"), 0);
+		GEngine->AddOnScreenDebugMessage(3, 5, FColor::Cyan, TEXT("Got Message"), 0);
 		UE_LOG(LogTemp, Warning, TEXT("Cannot read array, nullptr returned."));
 		return;
 	}
 	
-	FOSCData data;
-	TArray<uint8> mData;
-	mData = *ArrayReaderPtr;
-	*ArrayReaderPtr << data;
-	FString text;
-	for (int i = 0; i < mData.Num(); i++) {
-		char a = mData[i];
-		text.Append(a);
-		UE_LOG(LogTemp, Warning, TEXT("Data : %d"), mData[i]);
-	}
-
-	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Name : "));
 	
-
-	GEngine->AddOnScreenDebugMessage(5, 5, FColor::Cyan, TEXT("Got data"));
+	//FArrayReaderPtr is the same as TArray<uint8>
+	auto data = ArrayReaderPtr->GetData();
+	//Amount of bytes
+	auto count = ArrayReaderPtr->Num();
+	//Creates 
+	FString mMessageText = UDPBytesToString(data, count);
+	UE_LOG(LogTemp, Warning, TEXT("Data : %s"), *mMessageText);
+	GEngine->AddOnScreenDebugMessage(4, 5, FColor::Cyan, (TEXT("Got data %s"), *mMessageText));
 }
 
 void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -89,4 +86,27 @@ void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		mSocket->Close();
 		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(mSocket);
 	}
+}
+
+FString AMyNetworkingActor::UDPBytesToString(const uint8* In, int32 Count)
+{
+	//String to return
+	FString Result;
+	//Empty string with count size
+	Result.Empty(Count);
+
+	while (Count)
+	{
+		// Put the byte into an int16 and add 1 to it, this keeps anything from being put into the string as a null terminator
+		int16 Value = *In;
+
+		//Adding 1 gives wrong conversion
+		//Value += 1;
+
+		Result += TCHAR(Value);
+
+		++In;
+		Count--;
+	}
+	return Result;
 }
