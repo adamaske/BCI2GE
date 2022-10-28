@@ -24,6 +24,7 @@ class BCI2GE():
        
     def loop(self):
         data, adr = self.bci_reciever.receieve()
+        
         print("BCI_Receiver got data ", data, " from ", adr)
         #send it to unreal
         self.ue_sender.send(data);
