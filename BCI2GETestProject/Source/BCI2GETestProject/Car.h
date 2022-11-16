@@ -12,7 +12,7 @@ class UCameraComponent;
 class UCapsuleComponent;
 
 UCLASS()
-class HANDTRACKING_API ACar : public APawn
+class BCI2GETESTPROJECT_API ACar : public APawn
 {
 	GENERATED_BODY()
 
