@@ -28,6 +28,7 @@ public:
 	};
 	uint8* mData;
 	int32 mCount;
+
 };
 
 USTRUCT(BlueprintType)

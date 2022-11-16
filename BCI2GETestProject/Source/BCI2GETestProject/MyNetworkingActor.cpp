@@ -15,7 +15,7 @@ AMyNetworkingActor::AMyNetworkingActor()
 void AMyNetworkingActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	return;
 	SetupReceiver("127.0.0.1", 5700);
 	
 }
@@ -67,12 +67,44 @@ void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4
 	uint8* data = ArrayReaderPtr->GetData();
 	//Amount of bytes
 	int32 count = ArrayReaderPtr->Num();
+
+	//We want the packet class to do all of this
+	OSCPacket packet = OSCPacket(data, count);
+
 	//Creates string
-	FString mMessageText = UDPBytesToString(data, count);	
+	FString mMessageText = UDPBytesToString(data, count);
+	FString newMessage = BytesToHex(data, count);
+	HexToBytes(*newMessage, data);
+	FString realMessage = UDPBytesToString(data, count);
+
+	//Go through
+	if (int i = 0; i < realMessage.Len()) {
+
+
+		//What type is the value
+		if (realMessage[i] == *",") {
+			//, is before the letter which identifies the type
+			TCHAR t = realMessage[i];
+			if (t == 'i') {
+				//Its a int32
+				UE_LOG(LogTemp, Warning, TEXT("This has an int type"));
+			}
+			else if (t == 'f') {
+				//Its a float32
+				UE_LOG(LogTemp, Warning, TEXT("This has a float type"));
+			}
+			else if (t == 's') {
+				//Its a OSC-string
+				UE_LOG(LogTemp, Warning, TEXT("This has a OSC-string type"));
+			}
+		}
+		i++;
+	}
 
 	//Logs what was recieved
-	UE_LOG(LogTemp, Warning, TEXT("Data : %s"), *mMessageText);
-	GEngine->AddOnScreenDebugMessage(4, 5, FColor::Cyan, (TEXT("Got data %s"), *mMessageText));
+	UE_LOG(LogTemp, Warning, TEXT("UDPBytesToString : %s"), *mMessageText);
+	UE_LOG(LogTemp, Warning, TEXT("BytesToHexToBytesToString : %s"), *realMessage);
+	GEngine->AddOnScreenDebugMessage(4, 5, FColor::Cyan, (TEXT("Got data %s"), *realMessage));
 }
 
 void AMyNetworkingActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
