@@ -68,38 +68,7 @@ void AMyNetworkingActor::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4
 	//Amount of bytes
 	int32 count = ArrayReaderPtr->Num();
 	//Creates string
-	FString mMessageText = UDPBytesToString(data, count);
-
-	//OSCPacket packet = OSCPacket(data, count);
-	std::vector<TCHAR*> mCommands
-	for (size_t i = 0; i < mMessageText.size(); i++)
-	{
-		if(mMessageText[i] == '/'){
-			//Start a important 
-			for (size_t j = i; j < mMessageText.size(); j++)
-			{
-				if(mMessageText[j] == '/'){
-					//First command string.substring(i, j);
-					mCommands.push_back(mMessageText.substr(i, j));
-				}
-			}
-			
-		}
-		if(mMessageText[i] == ','){
-			if(mMessageText[i+1] == 'f'){
-				//Type float
-				std::string val = mMessageText.substr(i+1, mMessageText.size()-1);
-				float v = std::stof(val);
-				//Refrence to player car
-				//mCar->Move
-				if(mCommands[1] == "drop"){
-					
-				}
-			}
-		}
-		/* code */
-	}
-	
+	FString mMessageText = UDPBytesToString(data, count);	
 
 	//Logs what was recieved
 	UE_LOG(LogTemp, Warning, TEXT("Data : %s"), *mMessageText);
